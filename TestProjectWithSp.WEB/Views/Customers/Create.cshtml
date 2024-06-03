@@ -50,20 +50,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        $(document).ready(function () {
-            $(#createForm).validate({
-                rules: {
-                    nameId: {
-                        required:true
-                    }
-                },
-                messages: {
-                    nameId: {
-                        required: "Name is Reruired Ash";
-                    }
-                }
-            });
-        });
-    </script>
+   
 }

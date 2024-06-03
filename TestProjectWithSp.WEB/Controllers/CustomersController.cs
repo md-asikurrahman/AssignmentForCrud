@@ -20,8 +20,12 @@ namespace TestProjectWithSp.WEB.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string Msg)
         {
+            if(Msg != null)
+            {
+                ViewBag.Msg = Msg;
+            }
             var customers = await _context.Customers.FromSqlRaw("exec spGetAllCustomer").ToListAsync();
             return View(customers);
         }
@@ -42,10 +46,23 @@ namespace TestProjectWithSp.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                var customerData = $"spInsertCustomer @name ='{customer.Name}',@isActive='{customer.IsActive}',@dob='{customer.Dob}',@mobileNo='{customer.MobileNo}',@Nidno='{customer.NidNo}'";
-                _context.Database.ExecuteSqlRaw(customerData);
+                var sms = "";
+                try
+                {
+                    var customerData = $"spInsertCustomer @name ='{customer.Name}',@isActive='{customer.IsActive}',@dob='{customer.Dob}',@mobileNo='{customer.MobileNo}',@Nidno='{customer.NidNo}'";
+                    _context.Database.ExecuteSqlRaw(customerData);
+                    sms = "Customer created successfully";
+                }
+                catch (Exception ex)
+                {
+                    sms = ex.Message.ToString();
+                    return RedirectToAction("Index", new { Msg = sms });
+                    
+                }
                 
-                return RedirectToAction(nameof(Index));
+                
+                
+                return RedirectToAction("Index",new {Msg = sms});
             }
             return View(customer);
         }
